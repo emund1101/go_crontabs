@@ -1,26 +1,3 @@
-# go_crontabs
-go crontab 秒级定时器,代替linux下的crontab
-
-#### 文件说明
-```
---config 		配置文件
---crontab 		二进制执行文件
---crontab.go 	源代码
-```
-#### 应用参数说明
-```
-crontab -h
-  -c string
-        指定配置文件 (default "D:\\go\\demo\\crontab/config")
-  -d    是否守护进程执行
-  -h    帮助信息
-  -kill
-        杀掉守护进程
-  -s    是否调试输出
-  ```
-  
-#### 配置设置如下
-```
 # 1行里面 /1  只能出现1次
 # * * 23-7 23点至7点,每小时1次
 # * */5 * * * * * 每5分钟执行一次
@@ -37,5 +14,9 @@ crontab -h
 # |  |  |  |  |  |  .--year
 # *  *  *  *  *  *  *
 #50-20 * * * * * * echo asd
-
-````
+10,11,52 * * * * * * echo asd
+2 0-59/1 * * * * * curl -s http://baidu.com
+#* * * * * * * echo asd
+#* * * * * * * curl -s http://baidu.com
+#*/30 * * * * * * curl -s http://baidu.com
+#20 0 0 10 9 0 2020 curl -s http://baidu.com
