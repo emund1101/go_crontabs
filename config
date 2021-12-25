@@ -14,9 +14,9 @@
 # |  |  |  |  |  |  .--year
 # *  *  *  *  *  *  *
 #50-20 * * * * * * echo asd
-10,11,52 * * * * * * echo asd
+10,11,52 * * * * * * C:\GitStack\git\usr\bin\echo.exe ttasd
 2 0-59/1 * * * * * curl -s http://baidu.com
-#* * * * * * * echo asd
+*/5 * * * * * * C:\GitStack\git\usr\bin\echo.exe asd
 #* * * * * * * curl -s http://baidu.com
 #*/30 * * * * * * curl -s http://baidu.com
 #20 0 0 10 9 0 2020 curl -s http://baidu.com

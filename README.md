@@ -17,6 +17,7 @@ crontab -h
   -kill
         杀掉守护进程
   -s    是否调试输出
+  -stat 查看实时统计应用程序信息   http://localhost:6060/debug/statsviz/ 
   ```
   
 #### 配置设置如下

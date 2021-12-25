@@ -5,10 +5,12 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/arl/statsviz"
 	"github.com/spf13/cast"
 	"github.com/zh-five/xdaemon"
 	"io/fs"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"os/exec"
 	"regexp"
@@ -38,6 +40,7 @@ var (
 	f          *string
 	d          *bool
 	kill       *bool
+	stat       *bool
 	dir        string
 	conf_finfo fs.FileInfo //配置文件信息
 )
@@ -49,6 +52,7 @@ func init() {
 	f = flag.String("c", dir+"/config", "指定配置文件")
 	d = flag.Bool("d", false, "是否守护进程执行")
 	kill = flag.Bool("kill", false, "杀掉守护进程")
+	stat = flag.Bool("stat", false, "显示实时统计应用程序信息")
 }
 
 func main() {
@@ -83,11 +87,19 @@ func main() {
 		_ = ioutil.WriteFile(dir+"/pid", bytes.NewBufferString(cast.ToString(pid)).Bytes(), os.ModePerm)
 	}
 
+	if *stat {
+		statsviz.RegisterDefault()
+		go func() {
+			http.ListenAndServe("localhost:6060", nil)
+		}()
+	}
+
 	clocker(arr)
 }
 
 //处理配置文件的内容
 func parse_conf(file_path string) []string {
+	var separtor = "\n" //默认linux换行符
 	byte, err := ioutil.ReadFile(file_path)
 	//添加文件热更新重载crontab
 	if err != nil {
@@ -98,7 +110,10 @@ func parse_conf(file_path string) []string {
 	reg := regexp.MustCompile(`#(.*)\s?`)
 	st := reg.ReplaceAllString(cfg, "")
 	//处理空行
-	arr := strings.Split(strings.TrimSpace(st), "\r\n")
+	if runtime.GOOS == "windows" {
+		separtor = "\r\n"
+	}
+	arr := strings.Split(strings.TrimSpace(st), separtor)
 	return arr
 }
 
@@ -139,7 +154,7 @@ func convert(sec, min, hour, day, month, week, year string, ntime time.Time) boo
 	str_mon := preg(month) //检查月数
 	str_year := preg(year) //检查年数
 	str := Crontab_str{str_sec, str_min, str_hour, str_day, str_mon, str_week, str_year}
-	str.sec = str_sec
+	//str.sec = str_sec
 	//validate,err := tdeal(str, ntime, interval)
 	validate, err := str.cronhandle(ntime)
 
